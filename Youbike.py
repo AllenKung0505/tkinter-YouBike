@@ -8,7 +8,7 @@ class Window(tk.Tk):
     def __init__(self):
         super().__init__()
         #取得網路上的資料
-        res = requests.get('https://flask-robert.herokuapp.com/youbike')
+        res = requests.get('https://flask-robert.herokuapp.com/youbike')    #徐國堂老師提供
         jsonObj = res.json()
         areas = jsonObj['areas']
 
@@ -18,7 +18,7 @@ class Window(tk.Tk):
         buttonFont = Font(family='Helvetica', size=20)
 
         for index, area in enumerate(areas):
-            if index % 6 == 0:
+            if index % 6 == 0:       #每6個按鈕一列
                 parentframe = tk.Frame(topFrame)
                 parentframe.pack()
             btn = tk.Button(parentframe, text=area, font=buttonFont, padx=5, pady=5)
@@ -48,19 +48,17 @@ class Window(tk.Tk):
         self.totLabel.pack(anchor=tk.W)
         messageDisplayFrame.pack(expand=True,fill=tk.BOTH,padx=20,pady=30)
 
-
-
-
+    # 點擊行政區按鈕，將該行政區的站名做成list傳給self.createdRadioButtonFrame
     def userClick(self,event):
         self.bottomFrame.destroy()
-        selectedArea = event.widget['text']
-        urlString = "https://flask-robert.herokuapp.com/youbike/%s" % selectedArea
-        res = requests.get(urlString)
+        selectedArea = event.widget['text']     #按鈕的'text'含所指的行政區名
+        urlString = "https://flask-robert.herokuapp.com/youbike/%s" % selectedArea    #把行政區名放進url
+        res = requests.get(urlString)    #抓取該行政區裡的資料
         jsonobj = res.json()
         self.areas = jsonobj['data']
         snaList = []
         for area in self.areas:
-            snaList.append(area["sna"])
+            snaList.append(area["sna"])     #將每站站名集成snaList並傳給self.createdRadioButtonFrame
         self.createdRadioButtonFrame(data=snaList)
 
 
@@ -78,18 +76,18 @@ class Window(tk.Tk):
         else:
             self.radioButtonData = data
 
-        self.var = tk.IntVar()
+        self.var = tk.IntVar()   #整數變數
         for index, data in enumerate(self.radioButtonData):
             if index % 10 == 0:
                 parentframe = tk.Frame(self.bottomFrame)
                 parentframe.pack(side=tk.LEFT,expand=True,fill=tk.Y)
-            radioButton = tk.Radiobutton(parentframe, text=data, value=index, variable=self.var,command=self.userChoicedRadioButton).pack(anchor=tk.W)
+            radioButton = tk.Radiobutton(parentframe, text=data, value=index, variable=self.var,command=self.userChoicedRadioButton).pack(anchor=tk.W)  #變數的值為index
         self.bottomFrame.pack()
         self.var.set(0)
 
     def userChoicedRadioButton(self):
-        index = self.var.get()
-        infomation = self.areas[index]
+        index = self.var.get()  #取得該按鈕的變數，也就是index
+        infomation = self.areas[index]     #用index找出該站的所有資料
         print(infomation)
         datetimeString = infomation["mday"]
         datetimeFormat = "%Y%m%d%H%M%S"
